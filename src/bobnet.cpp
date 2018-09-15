@@ -4,11 +4,13 @@
 
 #include "bobnet.h"
 #include "connection.h"
-
+#include "response.h"
 namespace bobnet {
 
     Response get(std::string url) {
         Connection conn;
-        return conn.get(std::move(url));
+
+        auto req = RequestBuilder(http_request_type::GET, std::move(url)).request();
+        return conn.process(req);
     }
 }

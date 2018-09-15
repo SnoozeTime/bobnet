@@ -26,4 +26,10 @@ namespace bobnet {
     void Response::add_data(char *data, const size_t size) {
         buffer_ << std::string(data, size);
     }
+
+    RequestBuilder::RequestBuilder(bobnet::http_request_type type, std::string uri): request_(type, std::move(uri)) {}
+    RequestBuilder& RequestBuilder::setHeaders(bobnet::Headers headers) {
+        request_.set_headers(std::move(headers));
+        return *this;
+    }
 }

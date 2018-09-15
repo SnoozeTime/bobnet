@@ -12,6 +12,7 @@
 namespace bobnet {
 
     class Response;
+    class Request;
 
     // Connection will have one CURL handle that can be reused for
     // multiple requests.
@@ -19,11 +20,14 @@ namespace bobnet {
     public:
         Connection(): handle_(curl_easy_init(), &curl_easy_cleanup) {}
 
-        Response get(std::string url);
+        // Process an HTTP request. Build the request with RequestBuilder.
+        Response process(const Request& request);
     private:
         using HandlePtr = std::unique_ptr<CURL, decltype(&curl_easy_cleanup)>;
-
         HandlePtr handle_;
+
+
+        Response get(const Request& request);
     };
 }
 

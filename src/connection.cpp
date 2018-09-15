@@ -5,7 +5,7 @@
 #include "connection.h"
 #include "response.h"
 #include <iostream>
-
+#include <cassert>
 using namespace bobnet;
 
 static size_t write_body_cb(char *content, size_t size, size_t nmeb, Response *resp) {
@@ -21,10 +21,20 @@ static size_t write_header_cb(char *content, size_t size, size_t nmeb, Response 
     return real_size;
 }
 
+Response Connection::process(const bobnet::Request& request) {
 
-Response Connection::get(std::string url) {
+    switch (request.type()) {
+        case http_request_type::GET:
+            return get(request);
+        default:
+            assert(false);
+    }
+
+}
+
+Response Connection::get(const bobnet::Request& request) {
     Response resp;
-    curl_easy_setopt(handle_.get(), CURLOPT_URL, url.c_str());
+    curl_easy_setopt(handle_.get(), CURLOPT_URL, request.uri().c_str());
     curl_easy_setopt(handle_.get(), CURLOPT_WRITEFUNCTION, write_body_cb);
     curl_easy_setopt(handle_.get(), CURLOPT_WRITEDATA, &resp);
     curl_easy_setopt(handle_.get(), CURLOPT_HEADERFUNCTION, write_header_cb);
