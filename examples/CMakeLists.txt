@@ -2,3 +2,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable(simpleget simpleget.cpp)
 target_link_libraries(simpleget bobnet)
+
+
+add_executable(rest rest.cpp)
+target_link_libraries(rest bobnet)

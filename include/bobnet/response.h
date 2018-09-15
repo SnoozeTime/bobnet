@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <unordered_map>
+#include <experimental/optional>
 
 namespace bobnet {
 
@@ -21,6 +22,9 @@ namespace bobnet {
 
         // Get view-only headers map
         const std::unordered_map<std::string, std::string>& headers() const;
+
+        // get header value if exist
+        std::experimental::optional<std::string> header(const std::string name) const;
 
         // Complete header line should be given to this function.
         // It will parse the header and add it to the headers_ map

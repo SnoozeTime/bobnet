@@ -4,11 +4,19 @@
 
 #include "response.h"
 #include <string>
+#include <algorithm>
 
 namespace bobnet {
 
     void Headers::add(std::string header, std::string value) {
         headers_.emplace(header, std::move(value));
+    }
+
+    std::experimental::optional<std::string> Headers::header(const std::string name) const {
+        if (headers_.find(name) != headers_.end()) {
+            return std::experimental::optional<std::string>{headers_.at(name)};
+        }
+        return std::experimental::nullopt;
     }
 
     const std::unordered_map<std::string, std::string>& Headers::headers() const { return headers_; }
@@ -19,7 +27,12 @@ namespace bobnet {
 
         if (colon_idx < size-2) {
             // Need to remove extra \r\n.. TODO do it more cleanly.
-            add(header_str.substr(0, colon_idx), header_str.substr(colon_idx, size-2));
+
+            auto value = header_str.substr(colon_idx+1, size);
+            value.erase(0, value.find_first_not_of(' '));
+            value.erase(value.find_last_of('\n'), size);
+            value.erase(value.find_last_of('\r'), size);
+            add(header_str.substr(0, colon_idx), std::move(value));
         }
     }
 
