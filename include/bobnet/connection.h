@@ -27,8 +27,8 @@ namespace bobnet {
         HandlePtr handle_;
 
 
-        Response get(const Request& request);
-        Response post(const Request& request);
+        void get(const Request& request, Response& resp);
+        void post(const Request& request, Response& resp);
     };
 }
 

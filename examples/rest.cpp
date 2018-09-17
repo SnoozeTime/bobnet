@@ -15,4 +15,12 @@ int main() {
     } else {
         std::cout << "Nope. " << resp.status_code() << std::endl;
     }
+
+    auto resp2 = bobnet::get("http://localhost:9080/value/blasw/");
+
+    if (resp2.status_code() == 200) {
+        std::cout << "SUCCESS -> " << resp2.text() << std::endl;
+    } else {
+        std::cout << "Nope. " << resp2.status_code() << std::endl;
+    }
 }
