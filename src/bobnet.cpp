@@ -13,4 +13,11 @@ namespace bobnet {
         auto req = RequestBuilder(http_request_type::GET, std::move(url)).request();
         return conn.process(req);
     }
+
+    Response post(std::string url) {
+        Connection conn;
+
+        auto req = RequestBuilder(http_request_type::POST, std::move(url)).request();
+        return conn.process(req);
+    }
 }

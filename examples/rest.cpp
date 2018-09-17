@@ -8,7 +8,11 @@
 //https://jsonplaceholder.typicode.com/todos/1
 int main() {
     // First will query the GET endpoint
-    auto resp = bobnet::get("https://jsonplaceholder.typicode.com/todos/1");
+    auto resp = bobnet::post("http://localhost:9080/record/blasw/1");
 
-    std::cout << resp.text() << std::endl;
+    if (resp.status_code() == 200) {
+        std::cout << "SUCCESS -> " << resp.text() << std::endl;
+    } else {
+        std::cout << "Nope. " << resp.status_code() << std::endl;
+    }
 }

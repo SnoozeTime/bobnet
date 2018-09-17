@@ -28,6 +28,7 @@ namespace bobnet {
 
 
         Response get(const Request& request);
+        Response post(const Request& request);
     };
 }
 

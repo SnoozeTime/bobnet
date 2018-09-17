@@ -12,7 +12,7 @@ namespace bobnet {
         headers_.emplace(header, std::move(value));
     }
 
-    std::experimental::optional<std::string> Headers::header(const std::string name) const {
+    std::experimental::optional<std::string> Headers::header(const std::string& name) const {
         if (headers_.find(name) != headers_.end()) {
             return std::experimental::optional<std::string>{headers_.at(name)};
         }

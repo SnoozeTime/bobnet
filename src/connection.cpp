@@ -17,7 +17,20 @@ static size_t write_body_cb(char *content, size_t size, size_t nmeb, Response *r
 // Get header and status code...
 static size_t write_header_cb(char *content, size_t size, size_t nmeb, Response *resp) {
     size_t real_size = size * nmeb;
-    resp->headers().parse_header(content, real_size);
+    std::string http_header_str(content, real_size);
+
+
+    if (http_header_str.substr(0, 4) == "HTTP") {
+        // status code is 3 digits from first space
+        auto status_index = http_header_str.find(' ');
+        std::stringstream status_ss(http_header_str.substr(status_index+1, 3));
+        int status;
+        status_ss >> status;
+        resp->set_status_code(status);
+    } else {
+        // Status line :)
+        resp->headers().parse_header(content, real_size);
+    }
     return real_size;
 }
 
@@ -26,6 +39,8 @@ Response Connection::process(const bobnet::Request& request) {
     switch (request.type()) {
         case http_request_type::GET:
             return get(request);
+        case http_request_type::POST:
+            return post(request);
         default:
             assert(false);
     }
@@ -34,12 +49,34 @@ Response Connection::process(const bobnet::Request& request) {
 
 Response Connection::get(const bobnet::Request& request) {
     Response resp;
+    curl_easy_setopt(handle_.get(), CURLOPT_HTTPGET, 1L);
     curl_easy_setopt(handle_.get(), CURLOPT_URL, request.uri().c_str());
     curl_easy_setopt(handle_.get(), CURLOPT_WRITEFUNCTION, write_body_cb);
     curl_easy_setopt(handle_.get(), CURLOPT_WRITEDATA, &resp);
     curl_easy_setopt(handle_.get(), CURLOPT_HEADERFUNCTION, write_header_cb);
     curl_easy_setopt(handle_.get(), CURLOPT_HEADERDATA, &resp);
     curl_easy_setopt(handle_.get(), CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+
+    auto res = curl_easy_perform(handle_.get());
+    if (res != CURLE_OK) {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+    }
+
+    return resp;
+}
+
+Response Connection::post(const bobnet::Request& request) {
+    Response resp;
+    curl_easy_setopt(handle_.get(), CURLOPT_URL, request.uri().c_str());
+    curl_easy_setopt(handle_.get(), CURLOPT_POST, 1L);
+    curl_easy_setopt(handle_.get(), CURLOPT_POSTFIELDSIZE, 0);
+    curl_easy_setopt(handle_.get(), CURLOPT_WRITEFUNCTION, write_body_cb);
+    curl_easy_setopt(handle_.get(), CURLOPT_WRITEDATA, &resp);
+    curl_easy_setopt(handle_.get(), CURLOPT_HEADERFUNCTION, write_header_cb);
+    curl_easy_setopt(handle_.get(), CURLOPT_HEADERDATA, &resp);
+    curl_easy_setopt(handle_.get(), CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
 
     auto res = curl_easy_perform(handle_.get());
     if (res != CURLE_OK) {

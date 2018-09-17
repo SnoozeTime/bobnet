@@ -22,6 +22,7 @@ namespace bobnet {
     class Response;
 
     Response get(std::string url);
+    Response post(std::string url);
 }
 
 

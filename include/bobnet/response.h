@@ -24,7 +24,7 @@ namespace bobnet {
         const std::unordered_map<std::string, std::string>& headers() const;
 
         // get header value if exist
-        std::experimental::optional<std::string> header(const std::string name) const;
+        std::experimental::optional<std::string> header(const std::string& name) const;
 
         // Complete header line should be given to this function.
         // It will parse the header and add it to the headers_ map
@@ -36,6 +36,7 @@ namespace bobnet {
 
     enum class http_request_type {
         GET,
+        POST,
     };
 
     // Input of an HTTP request.
@@ -74,7 +75,7 @@ namespace bobnet {
 
     class Response {
     public:
-        Response(): buffer_(), headers_() {}
+        Response(): buffer_(), headers_(), status_code_() {}
 
         std::string text() const { return buffer_.str(); }
 
@@ -83,9 +84,14 @@ namespace bobnet {
 
         const Headers& headers() const {return headers_;};
         Headers& headers() {return headers_;};
+
+        void set_status_code(int status_code) {status_code_ = status_code;}
+        int status_code() { return status_code_;}
     private:
         std::stringstream buffer_;
         Headers headers_;
+        int status_code_;
+
     };
 }
 
