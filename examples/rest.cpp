@@ -7,6 +7,8 @@
 
 //https://jsonplaceholder.typicode.com/todos/1
 int main() {
+    bobnet::Context context;
+
     // First will query the GET endpoint
     auto resp = bobnet::post("http://localhost:9080/record/blasw/1");
 

@@ -6,3 +6,4 @@ function (add_bobnet_test test_class)
 endfunction()
 
 add_bobnet_test(headers_test)
+add_bobnet_test(request_test)

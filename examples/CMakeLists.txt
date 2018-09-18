@@ -1,8 +1,10 @@
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_executable(simpleget simpleget.cpp)
-target_link_libraries(simpleget bobnet)
+function(add_example example_name sources)
+    add_executable(${example_name} ${sources})
+    target_link_libraries(${example_name} bobnet)
+endfunction()
 
-
-add_executable(rest rest.cpp)
-target_link_libraries(rest bobnet)
+add_example(simpleget simpleget.cpp)
+add_example(rest rest.cpp)
+add_example(reuse_connection reuse_connection.cpp)

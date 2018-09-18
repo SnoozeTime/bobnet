@@ -8,6 +8,7 @@
 #include <string>
 #include <curl/curl.h>
 #include "response.h"
+#include "connection.h"
 
 namespace bobnet {
 
@@ -19,10 +20,11 @@ namespace bobnet {
         ~Context() { curl_global_cleanup(); }
     };
 
-    class Response;
+    RequestBuilder make_builder(http_request_type type, std::string uri);
 
     Response get(std::string url);
     Response post(std::string url);
+
 }
 
 

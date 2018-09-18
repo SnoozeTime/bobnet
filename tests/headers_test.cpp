@@ -33,3 +33,29 @@ TEST(parse_headers, with_crlf_nullterminated) {
         FAIL();
     }
 }
+
+TEST(dump_headers, normal_case) {
+    bobnet::Headers headers;
+    headers.add("Content-Type", "application/json");
+    headers.add("X-Custom", "key");
+    auto curl_list = headers.dump();
+
+    if (curl_list) {
+        ASSERT_STREQ("X-Custom: key", curl_list->data);
+
+        auto next = curl_list->next;
+        ASSERT_STREQ("Content-Type: application/json", next->data);
+        ASSERT_TRUE(next->next == nullptr);
+    } else {
+        FAIL();
+    }
+}
+
+TEST(dump_headers, no_headers) {
+    bobnet::Headers headers;
+    auto curl_list = headers.dump();
+
+    if (curl_list) {
+        FAIL();
+    }
+}

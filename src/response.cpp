@@ -3,6 +3,7 @@
 //
 
 #include "response.h"
+
 #include <string>
 #include <algorithm>
 
@@ -17,6 +18,18 @@ namespace bobnet {
             return std::experimental::optional<std::string>{headers_.at(name)};
         }
         return std::experimental::nullopt;
+    }
+
+    HeaderPtr Headers::dump() const {
+        curl_slist *chunk = nullptr;
+
+        for (const auto& pair: headers_) {
+            std::stringstream chunk_data_ss;
+            chunk_data_ss << pair.first << ": " << pair.second;
+            auto data = chunk_data_ss.str();
+            chunk = curl_slist_append(chunk, data.c_str());
+        }
+        return HeaderPtr(chunk, &curl_slist_free_all);
     }
 
     const std::unordered_map<std::string, std::string>& Headers::headers() const { return headers_; }
@@ -43,6 +56,14 @@ namespace bobnet {
     RequestBuilder::RequestBuilder(bobnet::http_request_type type, std::string uri): request_(type, std::move(uri)) {}
     RequestBuilder& RequestBuilder::setHeaders(bobnet::Headers headers) {
         request_.set_headers(std::move(headers));
+        return *this;
+    }
+
+    RequestBuilder& RequestBuilder::json(const nlohmann::json &json) {
+        // TODO replace magic strings
+        request_.add_header("Content-Type", "application/json");
+        request_.set_content(json.dump());
+
         return *this;
     }
 }

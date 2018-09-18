@@ -1,6 +1,6 @@
 include_directories(${PROJECT_SOURCE_DIR}/include/bobnet)
 
-set(CMAKE_CXX_FLAGS  "-g -O -Wall -Weffc++ -pedantic  \
+set(CMAKE_CXX_FLAGS  "-g -O -Wall -pedantic  \
     -pedantic-errors -Wextra -Wcast-align \
     -Wcast-qual  -Wchar-subscripts  -Wcomment -Wconversion \
     -Wdisabled-optimization \
@@ -14,8 +14,8 @@ set(CMAKE_CXX_FLAGS  "-g -O -Wall -Weffc++ -pedantic  \
     -Wpacked -Wparentheses  -Wpointer-arith \
     -Wredundant-decls -Wreturn-type \
     -Wsequence-point  -Wshadow -Wsign-compare  -Wstack-protector \
-    -Wstrict-aliasing -Wstrict-aliasing=2 -Wswitch  -Wswitch-default \
-    -Wswitch-enum -Wtrigraphs  -Wuninitialized \
+    -Wstrict-aliasing -Wstrict-aliasing=2 -Wswitch  \
+    -Wtrigraphs  -Wuninitialized \
     -Wunknown-pragmas  -Wunreachable-code -Wunused \
     -Wunused-function  -Wunused-label  -Wunused-parameter \
     -Wunused-value  -Wunused-variable  -Wvariadic-macros \
