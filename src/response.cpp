@@ -61,7 +61,7 @@ namespace bobnet {
 
     RequestBuilder& RequestBuilder::json(const nlohmann::json &json) {
         // TODO replace magic strings
-        request_.add_header("Content-Type", "application/json");
+        request_.add_header("Content-Type", "application/json; charset=UTF-8");
         request_.set_content(json.dump());
 
         return *this;
