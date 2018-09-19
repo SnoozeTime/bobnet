@@ -53,6 +53,10 @@ namespace bobnet {
         buffer_ << std::string(data, size);
     }
 
+    nlohmann::json Response::json() const {
+        return nlohmann::json::parse(buffer_.str());
+    }
+
     RequestBuilder::RequestBuilder(bobnet::http_request_type type, std::string uri): request_(type, std::move(uri)) {}
     RequestBuilder& RequestBuilder::setHeaders(bobnet::Headers headers) {
         request_.set_headers(std::move(headers));

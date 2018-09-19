@@ -95,6 +95,7 @@ namespace bobnet {
         Response(): buffer_(), headers_(), status_code_() {}
 
         std::string text() const { return buffer_.str(); }
+        nlohmann::json json() const;
 
         // This is called to add data at the end of our buffer.
         void add_data(char* data, size_t size);

@@ -61,14 +61,14 @@ Response Connection::perform(const bobnet::Request& request) {
     return resp;
 }
 
-void Connection::get(const bobnet::Request& request, Response& /*resp*/) {
+void Connection::get(const bobnet::Request& /*request*/, Response& /*resp*/) {
     curl_easy_setopt(handle_.get(), CURLOPT_HTTPGET, 1L);
+}
+
+void Connection::post(const bobnet::Request& request, Response& /*resp*/) {
+    curl_easy_setopt(handle_.get(), CURLOPT_POST, 1L);
 
     if (!request.content().empty()) {
         curl_easy_setopt(handle_.get(), CURLOPT_POSTFIELDS, request.content().c_str());
     }
-}
-
-void Connection::post(const bobnet::Request& /*request*/, Response& /*resp*/) {
-    curl_easy_setopt(handle_.get(), CURLOPT_POST, 1L);
 }
