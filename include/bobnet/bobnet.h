@@ -9,6 +9,7 @@
 #include <curl/curl.h>
 #include "response.h"
 #include "connection.h"
+#include "options.h"
 
 namespace bobnet {
 
@@ -22,8 +23,25 @@ namespace bobnet {
 
     RequestBuilder make_builder(http_request_type type, std::string uri);
 
-    Response get(std::string url);
-    Response post(std::string url);
+    /// Perform a get request
+    /// \param url
+    /// \param options
+    /// \return
+    Response get(std::string url, Options options = Options());
+
+    /// Perform a post request for the given URL and the given options
+    /// \param url
+    /// \param options (optional) additional options for the post request
+    /// \return
+    Response post(std::string url, Options options = Options());
+
+
+    /// Overload of bobnet::post which add json as function parameter.
+    /// \param url
+    /// \param json
+    /// \param options
+    /// \return
+    Response post(std::string url, nlohmann::json json, Options options = Options());
 
 }
 

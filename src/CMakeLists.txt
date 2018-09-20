@@ -21,5 +21,5 @@ set(CMAKE_CXX_FLAGS  "-g -O -Wall -pedantic  \
     -Wunused-value  -Wunused-variable  -Wvariadic-macros \
     -Wvolatile-register-var  -Wwrite-strings -Wno-error=padded")
 
-add_library(bobnet bobnet.cpp connection.cpp response.cpp)
+add_library(bobnet bobnet.cpp connection.cpp response.cpp options.cpp exception.cpp)
 target_link_libraries(bobnet curl)

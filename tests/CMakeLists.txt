@@ -7,3 +7,4 @@ endfunction()
 
 add_bobnet_test(headers_test)
 add_bobnet_test(request_test)
+add_bobnet_test(connection_test)

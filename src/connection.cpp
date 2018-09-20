@@ -6,6 +6,8 @@
 #include "response.h"
 #include <iostream>
 #include <cassert>
+#include <exception.h>
+
 using namespace bobnet;
 
 static size_t write_body_cb(char *content, size_t size, size_t nmeb, Response *resp) {
@@ -54,8 +56,9 @@ Response Connection::perform(const bobnet::Request& request) {
     auto res = curl_easy_perform(handle_.get());
 
     if (res != CURLE_OK) {
-        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+        throw BobnetException("curl_easy_perform() failed", res);
     }
+
     curl_easy_getinfo(handle_.get(), CURLINFO_RESPONSE_CODE, &status_code);
     resp.set_status_code(status_code);
     return resp;
