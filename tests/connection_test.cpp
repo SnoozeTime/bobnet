@@ -14,7 +14,7 @@ TEST(get_request, wrong_protocol) {
     try {
         conn.perform(req);
         FAIL();
-    } catch (BobnetException& e) {
-        ASSERT_STREQ("curl_easy_perform() failed - CURL error: wrong protocol", e.what());
+    } catch (const BobnetException& e) {
+        ASSERT_STREQ("curl_easy_perform() failed - CURL error: Unsupported protocol", e.what());
     }
 }

@@ -8,18 +8,17 @@
 
 namespace bobnet {
     BobnetException::BobnetException(const char *message, CURLcode underlying_error_code):
-        message_(message),
+        message_(),
         underlying_error_(underlying_error_code){
+        std::stringstream ss;
+        ss << message;
+        if (underlying_error_ != CURLE_OK) {
+            ss << " - CURL error: " << curl_easy_strerror(underlying_error_);
+        }
+        message_ = ss.str();
     }
 
     const char* BobnetException::what() const noexcept {
-        std::stringstream ss;
-        std::cout << "BIM\n";
-        ss << message_;
-        if (underlying_error_ != 0) {
-            ss << " - Curl error: " << curl_easy_strerror(underlying_error_);
-        }
-
-        return ss.str().c_str();
+        return message_.c_str();
     }
 }

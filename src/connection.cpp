@@ -10,6 +10,22 @@
 
 using namespace bobnet;
 
+/// Verify CURL code is OK. If not, will throw an exception. This is triggered by recoverable user
+/// error. Code bug should not be using this one (for example, setting the write function should never
+/// fail...)
+/// \param code
+/// \param details
+inline void throw_if_err(CURLcode code, const char* details) {
+    if (code != CURLE_OK) {
+        throw BobnetException(details, code);
+    }
+}
+
+/// Same as above but for non-recoverable errors
+/// \param code
+inline void assert_ok(CURLcode code) {
+    assert(code == CURLE_OK);
+}
 static size_t write_body_cb(char *content, size_t size, size_t nmeb, Response *resp) {
     size_t real_size = size * nmeb;
     resp->add_data(content, real_size);
@@ -30,16 +46,18 @@ Response Connection::perform(const bobnet::Request& request) {
     Response resp;
     long status_code;
 
-    curl_easy_setopt(handle_.get(), CURLOPT_URL, request.uri().c_str());
-    curl_easy_setopt(handle_.get(), CURLOPT_WRITEFUNCTION, write_body_cb);
-    curl_easy_setopt(handle_.get(), CURLOPT_WRITEDATA, &resp);
-    curl_easy_setopt(handle_.get(), CURLOPT_HEADERFUNCTION, write_header_cb);
-    curl_easy_setopt(handle_.get(), CURLOPT_HEADERDATA, &resp);
-    curl_easy_setopt(handle_.get(), CURLOPT_USERAGENT, "libcurl-agent/1.0");
+    // This should never fail...
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_WRITEFUNCTION, write_body_cb));
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_WRITEDATA, &resp));
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_HEADERFUNCTION, write_header_cb));
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_HEADERDATA, &resp));
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_USERAGENT, "libcurl-agent/1.0"));
 
+    // Set by user
+    throw_if_err(curl_easy_setopt(handle_.get(), CURLOPT_URL, request.uri().c_str()), "Set URL");
     auto header_data = request.headers().dump();
     if (header_data) {
-        curl_easy_setopt(handle_.get(), CURLOPT_HTTPHEADER, header_data.get());
+        throw_if_err(curl_easy_setopt(handle_.get(), CURLOPT_HTTPHEADER, header_data.get()), "Set headers");
     }
 
     switch (request.type()) {
@@ -53,11 +71,7 @@ Response Connection::perform(const bobnet::Request& request) {
             assert(false);
     }
 
-    auto res = curl_easy_perform(handle_.get());
-
-    if (res != CURLE_OK) {
-        throw BobnetException("curl_easy_perform() failed", res);
-    }
+    throw_if_err(curl_easy_perform(handle_.get()), "curl_easy_perform() failed");
 
     curl_easy_getinfo(handle_.get(), CURLINFO_RESPONSE_CODE, &status_code);
     resp.set_status_code(status_code);
@@ -65,13 +79,13 @@ Response Connection::perform(const bobnet::Request& request) {
 }
 
 void Connection::get(const bobnet::Request& /*request*/, Response& /*resp*/) {
-    curl_easy_setopt(handle_.get(), CURLOPT_HTTPGET, 1L);
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_HTTPGET, 1L));
 }
 
 void Connection::post(const bobnet::Request& request, Response& /*resp*/) {
-    curl_easy_setopt(handle_.get(), CURLOPT_POST, 1L);
+    assert_ok(curl_easy_setopt(handle_.get(), CURLOPT_POST, 1L));
 
     if (!request.content().empty()) {
-        curl_easy_setopt(handle_.get(), CURLOPT_POSTFIELDS, request.content().c_str());
+        throw_if_err(curl_easy_setopt(handle_.get(), CURLOPT_POSTFIELDS, request.content().c_str()), "Set body");
     }
 }
