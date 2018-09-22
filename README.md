@@ -45,7 +45,7 @@ int main() {
     std::cout << resp.text() << std::endl;
     
     // post json to some REST API.
-    auto resp2 = bobnet::post(bobnet::post("https://jsonplaceholder.typicode.com/posts",
+    auto resp2 = bobnet::post("https://jsonplaceholder.typicode.com/posts",
         R"(
         {
             "title": "foo",
@@ -54,6 +54,6 @@ int main() {
         }
         )"_json
     );
-    std::cout << resp.json() << std::endl;
+    std::cout << resp2.json() << std::endl;
 }
 ```
