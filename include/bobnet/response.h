@@ -57,11 +57,13 @@ namespace bobnet {
         void set_headers(Headers headers) { headers_ = std::move(headers); }
         void set_content(std::string content) { content_ = std::move(content); }
         void add_header(std::string key, std::string value) { headers_.add(std::move(key), std::move(value));}
+        void set_external_socket(int fd) { external_socket_ = fd; }
 
         http_request_type type() const { return type_; }
         const std::string& uri() const { return uri_; }
         const std::string& content() const { return content_; }
         const Headers& headers() const { return headers_; }
+        const int* external_socket() const { return &external_socket_; }
     private:
         http_request_type type_;
         std::string uri_;
@@ -69,6 +71,10 @@ namespace bobnet {
 
         // In case of POST request, this is the body ;)
         std::string content_;
+
+        // external socket (for example, unix socket). Should be already connected before use.
+        // -1 mean none.
+        int external_socket_{-1};
     };
 
 

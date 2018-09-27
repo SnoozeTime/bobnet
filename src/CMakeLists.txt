@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS  "-g -O -Wall -pedantic  \
     -Wformat-nonliteral -Wformat-security  \
     -Wformat-y2k -Wimport  -Winit-self \
     -Winvalid-pch   \
-    -Wunsafe-loop-optimizations  -Wlong-long -Wmissing-braces \
+    -Wlong-long -Wmissing-braces \
     -Wmissing-field-initializers -Wmissing-format-attribute   \
     -Wmissing-include-dirs -Wmissing-noreturn \
     -Wpacked -Wparentheses  -Wpointer-arith \
